@@ -1,0 +1,43 @@
+{
+  "host": "api.example.com",
+  "basePath": "/v1",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/tests": {
+      "get": {
+        "operationId": "listTests"
+      },
+      "post": {
+      }
+    },
+    "/issues": {
+      "get": {
+        "operationId": "listIssues",
+        "parameters" : [
+          {
+            "name": "apikey",
+            "in": "header",
+            "required": true
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "tag",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "required": false
+          }
+        ]
+      }
+    }
+  }
+}
