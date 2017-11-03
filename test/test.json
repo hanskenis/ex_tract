@@ -39,5 +39,18 @@
         ]
       }
     }
+  },
+  "definitions": {
+    "Issue": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "string"
+        }
+      }
+    }
   }
 }

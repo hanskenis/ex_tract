@@ -5,12 +5,31 @@ defmodule ExTract do
     scheme = Map.get(schema, "schemes") |> List.first()
     host = Map.get(schema, "host")
     base_path = Map.get(schema, "basePath")
+    definitions = Map.get(schema, "definitions")
 
     quote do
+      unquote(generate_models(definitions))
       unquote(generate_paths(scheme, host, base_path, paths))
 
       def http_client() do
         Application.get_env(:ex_tract, :http_client, ExTract.HttpClients.Tesla)
+      end
+    end
+  end
+
+  defp generate_models(definitions) do
+    for definition <- definitions do
+      generate_definition(definition)
+    end
+  end
+
+  defp generate_definition({name, definition}) do
+    properties = Map.get(definition, "properties")
+                 |> Enum.map(fn({key, value}) -> String.to_atom(key) end)
+    name = String.to_atom(name)
+    quote do
+      defmodule Module.concat(__MODULE__, unquote(name)) do
+        defstruct unquote(properties)
       end
     end
   end
@@ -80,7 +99,6 @@ defmodule ExTract do
     quote do
       query_params = unquote(query_params)
       unquote(if optional_arguments?, do: generate_optional_arguments(parameters))
-      IO.inspect(query_params)
       query = URI.encode_query(query_params)
       url = unquote(url)
             |> URI.parse()
@@ -92,7 +110,7 @@ defmodule ExTract do
   end
 
   defp generate_optional_arguments(parameters) do
-    quote do 
+    quote do
       unquote(optional_query_parameters(parameters))
     end
   end
